@@ -50,27 +50,24 @@ fit_gam <- function(n, ...) {
 
 # for supplementary figs:
 
-plot_gams <- function(data_combined, model_in, this_study, ..., mcolor = "#5BBCD6", lcol = "black", 
-                      plot_smooth = TRUE, log_t = TRUE, plot_stable_conc = FALSE, ljust = "right", 
+plot_gams <- function(data_combined, model_in, this_study, ..., mcolor = "#5BBCD6", lcol = "black",
+                      log_t = TRUE, ljust = "right", 
                       gap_size = 5, g_var = "series", lwidth = .5) {
   # build dataset:
   
-  these_facets <- if (plot_smooth) {
-    c("data", "slope", "smooth")
-  } else {
-    c("data", "slope")
-  }
-  
   data <- data_combined %>%
-    mutate(series = str_extract(series, "(?<=\\.)[a-z]$")) %>% 
+    mutate(
+      series = str_extract(series, "(?<=\\.)[a-z]$"),
+      facets = if_else(type == "data", paste(type, series, sep = "_"), type) # for dissolved lead facets
+    ) %>%
     filter(
       study == this_study,
-      type %in% these_facets,
       ...
     )
   
+  # log-transform fitted values for plotting:
+  
   if (log_t) {
-    # log-transform fitted values for plotting:
     data <- data %>%
       mutate(
         across(starts_with("fit"), log10),
@@ -78,15 +75,17 @@ plot_gams <- function(data_combined, model_in, this_study, ..., mcolor = "#5BBCD
       )
   }
   
-  if(g_var == "series") model_in <- model_in %>% 
-    mutate(series = str_extract(series, "(?<=\\.)[a-z]$")) %>% 
-    filter(...)
+  if (g_var == "series") {
+    model_in <- model_in %>%
+      mutate(series = str_extract(series, "(?<=\\.)[a-z]$")) %>%
+      filter(...)
+  }
   
   stable_here <- model_in %>%
     filter(
       study == this_study,
       cens == "none"
-    )
+    ) 
   
   stable_line <- if (nrow(stable_here) > 0) {
     geom_vline(
@@ -98,10 +97,13 @@ plot_gams <- function(data_combined, model_in, this_study, ..., mcolor = "#5BBCD
     NULL
   }
   
+  top_row <- data$facets[1]
+  
   annotate_stable <- if (nrow(stable_here) > 0) {
     geom_label(
       data = stable_here %>%
         mutate(
+          facets = top_row,
           label = "Stabilization time",
           type = "data"
         ),
@@ -114,149 +116,163 @@ plot_gams <- function(data_combined, model_in, this_study, ..., mcolor = "#5BBCD
     NULL
   }
   
-  # this is a temporary check on stable_conc:
-  
-  if(plot_stable_conc) {
-    stable_conc <- stable_conc %>%
-      mutate(
-        series = str_extract(series, "(?<=\\.)[a-z]$"),
-        type = "data"
-      ) %>% 
-      filter(study == this_study, ...)
-  }
-  
-  check_stable_conc <- function(log_t, plot_stable_conc) {
-    
-    if (log_t) {
-      stable_conc <- mutate(stable_conc, .epred_retrans = log10(.epred_retrans))
-    }
-    if (plot_stable_conc) {
-      geom_point(
-        data = stable_conc,
-        aes(y = .epred_retrans)
-      )
-    } else NULL
-    
-  }
-  
   # plot labels
   
+  fstriplabs_names <- data %>%
+    filter(type == "data") %>%
+    pull(facets) %>%
+    unique()
+  
+  series_labs <- rep("[Pb] (µg L<sup>-1</sup>\\)", length(fstriplabs_names))
+  
+  series_labs <- paste(series_labs, str_extract(fstriplabs_names, "(?<=_)[a-z]$"), sep = " - ")
+  
+  names(series_labs) <- fstriplabs_names
+  
   fstriplabs <- as_labeller(c(
+    series_labs,
     "data" = "[Pb] (µg L<sup>-1</sup>\\)",
     "slope" = "First derivative",
     "smooth" = "Long-term trend"
   ))
   
-  # if nseries == 1, no need for column strip text:
-  
   nseries <- data %>%
     distinct(series) %>%
     nrow()
   
-  facet <- if (nseries > 1 & g_var != "study") {
+  facet <- if (g_var == "series") {
     facet_grid(
       cols = vars(series),
       rows = vars(type = fct_relevel(type, "slope", after = Inf)),
       scales = "free",
       labeller = labeller(.rows = fstriplabs)
     )
-  } else {
+  } else if (g_var == "study") {
     facet_grid(
-      rows = vars(type = fct_relevel(type, "slope", after = Inf)),
+      rows = vars(facets = fct_relevel(facets, "slope", after = Inf)),
       scales = "free",
       labeller = labeller(.rows = fstriplabs)
     )
-  }
-  
-  term_line <- if (plot_smooth) {
-    geom_line(aes(y = term), col = mcolor)
   } else {
-    NULL
-  }
-  
-  term_ribbon <- if (plot_smooth) {
-    geom_ribbon(aes(ymin = term_lower, ymax = term_upper), alpha = .3, fill = mcolor, col = NA)
-  } else {
-    NULL
+    stop("g_var must be one of 'study' or 'series'.") # study is dissolved Pb model, series is total Pb model
   }
   
   adjust_scales <- if (log_t) {
-    ggh4x::facetted_pos_scales(
-      y = list(
-        type == "data" ~ scale_y_continuous(
-          breaks = log10(c(.1, 1, 10, 100, 1000, 10000)),
-          labels = \(x) 10^x
+    
+    if (g_var == "study") {
+      ggh4x::facetted_pos_scales(
+        y = list(
+          str_detect(facets, "data") ~ scale_y_continuous(
+            breaks = log10(c(.1, 1, 10, 100, 1000, 10000)),
+            labels = \(x) 10^x
+          )
         )
       )
-    )
+    } else 
+      if (g_var == "series") {
+        ggh4x::facetted_pos_scales(
+          y = list(
+            type == "data" ~ scale_y_continuous(
+              breaks = log10(c(.1, 1, 10, 100, 1000, 10000)),
+              labels = \(x) 10^x
+            )
+          )
+        )
+      }
+    
   } else {
     NULL
   }
-
-  # plot model fit? not if there are multiple time series in one plot:
   
-  model_ribbon <- if(g_var != "study") {
-    geom_ribbon(aes(ymin = fit_lower, ymax = fit_upper, group = series), alpha = .3, fill = mcolor, col = NA)
-  } else NULL
-  
-  model_line <- if(g_var != "study") {
-    geom_line(aes(y = fit, group = series), col = mcolor)
+  angled_labs <- if (g_var == "series") {
+    theme(axis.text.x = element_text(angle = 35, hjust = 1))
   } else NULL
   
   # build plot:
   
   data %>%
-    rowid_to_column() %>% 
-    group_by(rowid) %>% 
-    nest() %>% 
-    ungroup() %>% 
+    rowid_to_column() %>%
+    group_by(rowid) %>%
+    nest() %>%
+    ungroup() %>%
     mutate(
       data = map(data, ~ add_rows(.x, size = gap_size))
-    ) %>% 
-    unnest(data) %>% 
+    ) %>%
+    unnest(data) %>%
     ggplot(aes(date_numeric)) +
     facet +
     # data:
     geom_path(
-      data = \(x) x %>% 
+      data = \(x) x %>%
         mutate(value = if_else(censored == "none", value, NA_real_)),
       aes(y = value, group = series), col = lcol, linewidth = lwidth
     ) +
     geom_segment(
       data = \(x) x %>%
-        mutate(y = -Inf, type = "data") %>% 
-        filter(censored == "left") %>%
-        add_row(date_numeric = NA, value = NA, type = "data", series = unique(x$series)[1]),
+        filter(censored == "left", type == "data") %>%
+        add_row(
+          date_numeric = NA, value = NA,
+          type = unique(x$type)[1],
+          facets = unique(x$facets)[1],
+          series = unique(x$series)[1]
+        ) %>%
+        mutate(y = -Inf),
       aes(
-        x = date_numeric, 
-        xend = date_numeric, 
+        x = date_numeric,
+        xend = date_numeric,
         y = y,
         yend = value
       ),
-      col = "grey", size = .4
+      col = "grey", linewidth = .4
     ) +
     # fit:
-    model_ribbon + 
-    model_line + 
+    # geom_ribbon(aes(ymin = fit_lower, ymax = fit_upper, group = series), alpha = .3, fill = mcolor, col = NA) +
+    # geom_polygon() and geom_path() ensure that long gaps in the time series don't get predictions:
+    geom_polygon(
+      data = \(x) x %>% 
+        filter(type == "data") %>% 
+        # sections represent gaps in the time series:
+        mutate(section = cumsum(is.na(date_numeric))) %>% 
+        group_by(facets, section) %>% 
+        nest() %>% 
+        mutate(
+          poly = map(
+            data, 
+            ~ with(.x, tibble(
+              type = unique(type)[1], 
+              series = unique(series)[1], 
+              date_numeric = c(date_numeric, rev(date_numeric)), 
+              ypoly = c(fit_lower, rev(fit_upper))
+            ))
+          )
+        ) %>% 
+        unnest(poly),
+      aes(x = date_numeric, y = ypoly), 
+      alpha = .3, fill = mcolor
+    ) +
+    geom_path(aes(y = fit, group = series), col = mcolor) +
     # derivatives:
-    geom_hline(data = tibble(type = "slope", yi = 0), aes(yintercept = yi), linetype = 3) +
+    geom_hline(
+      data = \(x) x %>% 
+        filter(type == "slope") %>% 
+        mutate(yi = 0), 
+      aes(yintercept = yi), 
+      linetype = 3
+    ) +
     geom_ribbon(aes(ymin = deriv_lower, ymax = deriv_upper), alpha = .3, fill = mcolor, col = NA) +
     geom_line(aes(y = deriv), col = mcolor) +
     # smooth:
-    term_ribbon +
-    term_line +
+    geom_ribbon(aes(ymin = term_lower, ymax = term_upper), alpha = .3, fill = mcolor, col = NA) +
+    geom_line(aes(y = term), col = mcolor) +
     stable_line +
     annotate_stable +
-    check_stable_conc(log_t, plot_stable_conc) +
     adjust_scales +
     labs(
       x = "Time since P increase (days)",
       y = NULL
     ) +
-    theme(
-      strip.text.y = element_markdown(),
-      axis.text.x = element_text(angle = 35, hjust = 1)
-    )
+    theme(strip.text.y = element_markdown()) + 
+    angled_labs
 }
 
 add_rows <- function(x, size = 2, ...) {
@@ -265,10 +281,11 @@ add_rows <- function(x, size = 2, ...) {
   } else {
     if (x$d_x > size & x$type == "data") {
       add_row(
-        x, 
-        type = x$type, 
-        series = x$series, 
-        .before = -Inf, 
+        x,
+        type = x$type,
+        facets = x$facets,
+        series = x$series,
+        .before = -Inf,
         ...
       )
     } else {

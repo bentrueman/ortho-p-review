@@ -181,12 +181,12 @@ ggsave("figures/figure-s7.png", fig_s7, dev = "png", dpi = 600, width = 6.5, hei
 
 #------------------ figure s8 ------------------
 
-fig_s8 <- plot_gams(data_combined, model_in, "Study 4", series %in% letters[1:4])
+fig_s8 <- plot_gams(data_combined, model_in, "Study 4", series %in% letters[1:4], log_t = FALSE)
 ggsave("figures/figure-s8.png", fig_s8, dev = "png", dpi = 600, width = 6.5, height = 4.5)
 
 #------------------ figure s9 ------------------
 
-fig_s9 <- plot_gams(data_combined, model_in, "Study 4", series %in% letters[5:8])
+fig_s9 <- plot_gams(data_combined, model_in, "Study 4", series %in% letters[5:8], log_t = FALSE)
 ggsave("figures/figure-s9.png", fig_s9, dev = "png", dpi = 600, width = 6.5, height = 4.5)
 
 #------------------ figure s10 ------------------
@@ -212,7 +212,7 @@ ggsave("figures/figure-s13.png", fig_s13, dev = "png", dpi = 600, width = 6.5, h
 #------------------ figure s14 ------------------
 
 fig_s14 <- plot_gams(data_combined, model_in, "Study 7", series %in% letters[1:3])
-ggsave("figures/figure-s15.png", fig_s14, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s14.png", fig_s14, dev = "png", dpi = 600, width = 6.5, height = 4.5)
 
 #------------------ figure s15 ------------------
 
@@ -226,80 +226,80 @@ ggsave("figures/figure-s16.png", fig_s16, dev = "png", dpi = 600, width = 6.5, h
 
 #------------------ figure s17 ------------------
 
-fig_s17 <- plot_gams(data_combined, model_in, "Study 10", series %in% letters[4:6], log_t = FALSE)
+fig_s17 <- plot_gams(data_combined, model_in, "Study 10", series %in% letters[4:6])
 ggsave("figures/figure-s17.png", fig_s17, dev = "png", dpi = 600, width = 6.5, height = 4.5)
 
 #------------------ figure s18 ------------------
 
 fig_s18 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 1", 
-  g_var = "study", log_t = FALSE, lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s18.png", fig_s18, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s18.png", fig_s18, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s19 ------------------
 
 fig_s19 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 2", 
-  g_var = "study", log_t = FALSE, lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s19.png", fig_s19, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s19.png", fig_s19, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s20 ------------------
 
 fig_s20 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 4", 
-  g_var = "study", lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s20.png", fig_s20, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s20.png", fig_s20, dev = "png", dpi = 600, width = 6.5, height = 7.5)
 
 #------------------ figure s21 ------------------
 
 fig_s21 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 5", 
   series %in% letters[1:3] | is.na(series), 
-  g_var = "study", lwidth = .2
+  g_var = "study"
 )
-ggsave("figures/figure-s21.png", fig_s21, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s21.png", fig_s21, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s22 ------------------
 
 fig_s22 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 5", 
   series %in% letters[4:6] | is.na(series), g_var = "study", 
-  log_t = FALSE, lwidth = .2
+  log_t = FALSE
 )
-ggsave("figures/figure-s22.png", fig_s22, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s22.png", fig_s22, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s23 ------------------
 
 fig_s23 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 6", 
-  g_var = "study", log_t = FALSE, lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s23.png", fig_s23, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s23.png", fig_s23, dev = "png", dpi = 600, width = 6.5, height = 7.5)
 
 #------------------ figure s24 ------------------
 
 fig_s24 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 7", 
-  g_var = "study", lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s24.png", fig_s24, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s24.png", fig_s24, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s25 ------------------
 
 fig_s25 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 8", 
-  g_var = "study", log_t = FALSE, lwidth = .2
+  g_var = "study", log_t = FALSE
 )
-ggsave("figures/figure-s25.png", fig_s25, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+ggsave("figures/figure-s25.png", fig_s25, dev = "png", dpi = 600, width = 6.5, height = 6)
 
 #------------------ figure s26 ------------------
 
 fig_s26 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 9", 
-  g_var = "study", log_t = FALSE, lwidth = .2
+  g_var = "study", log_t = FALSE
 )
 ggsave("figures/figure-s26.png", fig_s26, dev = "png", dpi = 600, width = 6.5, height = 4.5)
 
@@ -307,9 +307,15 @@ ggsave("figures/figure-s26.png", fig_s26, dev = "png", dpi = 600, width = 6.5, h
 
 fig_s27 <- plot_gams(
   data_combined_diss, model_in_diss, "Study 10", 
-  g_var = "study", log_t = TRUE, lwidth = .2
-)
-ggsave("figures/figure-s27.png", fig_s27, dev = "png", dpi = 600, width = 6.5, height = 4.5)
+  g_var = "study", log_t = TRUE, gap_size = 10
+) + 
+  geom_point(
+    data = \(x) x %>% 
+      filter(date_numeric > 211),
+    aes(y = value),
+    col = "#5BBCD6"
+  )
+ggsave("figures/figure-s27.png", fig_s27, dev = "png", dpi = 600, width = 6.5, height = 9)
 
 #------------------ figure s28 ------------------
 

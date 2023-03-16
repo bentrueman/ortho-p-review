@@ -49,7 +49,8 @@ preds <- list(
   "Posterior (flat priors)" = fit_noprior
 ) %>%
   map_dfr(
-    ~ add_predicted_draws(model_in, .x),
+    ~ as_draws_df(.x, "b_Intercept") %>% 
+      transmute(.prediction = exp(b_Intercept)),
     .id = "type"
   )
 

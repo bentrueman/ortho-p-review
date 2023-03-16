@@ -73,7 +73,7 @@ p2 <- preds %>%
   scale_color_manual(values = palette[c(1,5)]) +
   scale_fill_manual(values = palette[c(1,5)]) +
   labs(
-    x = "Predicted stabilization\ntime (yr)",
+    x = "Mean stabilization\ntime (yr)",
     y = "Density",
     col = NULL, fill = NULL
   ) +
@@ -82,7 +82,7 @@ p2 <- preds %>%
     axis.ticks.y = element_blank(),
     legend.position = "right"
   ) +
-  coord_cartesian(xlim = c(0, 8 * 365))
+  coord_cartesian(xlim = c(0, 3 * 365))
 
 observed <- survfit(Surv(data, event) ~ 1, data = mutate(model_in, event = cens == "none")) %>% 
   with(tibble(time, surv))
