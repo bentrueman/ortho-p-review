@@ -1,3 +1,3 @@
-# ortho-p-review
+# Phosphate-based inhibitors for lead corrosion control
 
-This rerpository contains material necessary to reproduce the main results of an upcoming review of orthophosphate for corrosion control treatment.
+This repository contains material necessary to reproduce the main results of an upcoming review of orthophosphate for corrosion control treatment.
