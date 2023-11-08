@@ -5,9 +5,9 @@ library("brms")
 library("bgamcar1")
 library("dplyr")
 library("readr")
-library("assertr", include.only = "verify")
 
-options(mc.cores = parallel::detectCores())
+# options(mc.cores = parallel::detectCores())
+options(mc.cores = 4)
 
 #------------------ inputs ------------------
 
@@ -59,7 +59,7 @@ model_nonseasonal <- fit_stan_model(
   seed = stan_seed,
   form_tot, data_nonseasonal, prior_tot,
   save_warmup = FALSE,
-  iter = 2500
+  iter = 3500
 )
 
 # n.b., takes ~5.2 hrs to fit on a 2017 Macbook Pro

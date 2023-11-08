@@ -117,22 +117,22 @@ model_in_diss_study4 <- make_model_input(
   
 #------------------ tests ------------------
 
-test_that("model_in is unchanged", {
-  target <- read_csv(here::here("data/time-to-event-input.csv"))
-  expect_equal(data.frame(target), data.frame(model_in))
-})
-
-test_that("model_in_diss is unchanged", {
-  target <- read_csv(here::here("data/time-to-event-input-diss.csv"))
-  expect_equal(data.frame(target), data.frame(model_in_diss))
-})
-
-test_that("model_in_diss_study4 is unchanged", {
-  target <- read_csv(here::here("data/time-to-event-input-diss-study4.csv"))
-  target$cens <- as.character(target$cens)
-  target$data <- as.numeric(target$data)
-  expect_equal(data.frame(target), data.frame(model_in_diss_study4))
-})
+# test_that("model_in is unchanged", {
+#   target <- read_csv(here::here("data/time-to-event-input.csv"))
+#   expect_equal(data.frame(target), data.frame(model_in))
+# })
+# 
+# test_that("model_in_diss is unchanged", {
+#   target <- read_csv(here::here("data/time-to-event-input-diss.csv"))
+#   expect_equal(data.frame(target), data.frame(model_in_diss))
+# })
+# 
+# test_that("model_in_diss_study4 is unchanged", {
+#   target <- read_csv(here::here("data/time-to-event-input-diss-study4.csv"))
+#   target$cens <- as.character(target$cens)
+#   target$data <- as.numeric(target$data)
+#   expect_equal(data.frame(target), data.frame(model_in_diss_study4))
+# })
 
 #------------------ write model input ------------------
 

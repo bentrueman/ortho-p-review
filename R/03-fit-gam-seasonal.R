@@ -6,7 +6,8 @@ library("bgamcar1")
 library("dplyr")
 library("readr")
 
-options(mc.cores = parallel::detectCores())
+# options(mc.cores = parallel::detectCores())
+options(mc.cores = 4)
 
 #------------------ inputs ------------------
 

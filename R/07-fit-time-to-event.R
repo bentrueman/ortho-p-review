@@ -5,6 +5,8 @@ library("brms")
 library("survival")
 library("tidyverse")
 
+options(mc.cores = 4)
+
 #------------------ inputs ------------------
 
 model_in <- read_csv(here::here("data/time-to-event-input.csv"))
@@ -31,7 +33,6 @@ fit <- brm(
   bform,
   family = Gamma(link = "log"),
   data = model_in,
-  cores = 4,
   seed = 2145,
   prior = priors,
   control = list(adapt_delta = .95),
@@ -43,7 +44,6 @@ fit_noprior <- brm(
   bform,
   family = Gamma(link = "log"),
   data = model_in,
-  cores = 4,
   seed = 2145,
   prior = priors,
   control = list(adapt_delta = .95),

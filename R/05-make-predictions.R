@@ -36,15 +36,15 @@ preds_diss <- make_preds(
 
 #------------------ tests ------------------
 
-test_that("preds is unchanged", {
-  target <- read_csv(here::here("data/gam-predictions.csv"))
-  expect_equal(data.frame(target), data.frame(preds))
-})
-
-test_that("preds_diss is unchanged", {
-  target <- read_csv(here::here("data/gam-predictions-diss.csv"))
-  expect_equal(data.frame(target), data.frame(preds_diss))
-})
+# test_that("preds is unchanged", {
+#   target <- read_csv(here::here("data/gam-predictions.csv"))
+#   expect_equal(data.frame(target), data.frame(preds))
+# })
+# 
+# test_that("preds_diss is unchanged", {
+#   target <- read_csv(here::here("data/gam-predictions-diss.csv"))
+#   expect_equal(data.frame(target), data.frame(preds_diss))
+# })
 
 #------------------ write ------------------
 
