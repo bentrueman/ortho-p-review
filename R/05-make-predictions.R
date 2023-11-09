@@ -36,6 +36,8 @@ preds_diss <- make_preds(
 
 #------------------ tests ------------------
 
+# verify that a change in the code meant to clarify or improve efficiency didn't change the result:
+
 # test_that("preds is unchanged", {
 #   target <- read_csv(here::here("data/gam-predictions.csv"))
 #   expect_equal(data.frame(target), data.frame(preds))

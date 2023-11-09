@@ -117,6 +117,8 @@ model_in_diss_study4 <- make_model_input(
   
 #------------------ tests ------------------
 
+# verify that a change in the code meant to clarify or improve efficiency didn't change the result:
+
 # test_that("model_in is unchanged", {
 #   target <- read_csv(here::here("data/time-to-event-input.csv"))
 #   expect_equal(data.frame(target), data.frame(model_in))
