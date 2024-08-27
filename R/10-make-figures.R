@@ -6,6 +6,8 @@
 
 #------------------ setup ------------------
 
+if (!dir.exists("figures")) dir.create("figures")
+
 source(here::here("R/02-fit-gam-non-seasonal.R"))
 source(here::here("R/03-fit-gam-seasonal.R"))
 source(here::here("R/07-fit-time-to-event.R"))
