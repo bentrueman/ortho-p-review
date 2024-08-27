@@ -43,7 +43,7 @@ p0 <- out %>%
   geom_point(
     data = hdatdemo %>%
       mutate(
-        value = log(value) - unique(out$intercept),
+        value = log(value) - unique(round(out$intercept, 6)),
         facet = "weighted"
       ),
     aes(y = value),
@@ -345,7 +345,7 @@ ggsave("figures/figure-s28.png", fig_s28, dev = "png", dpi = 600, width = 6.5, h
 fig_s29 <- phree_preds %>%
   make_dx2() %>%  
   pivot_longer(cols = c(ph, dic, p_ppm, value)) %>%  
-  mutate(type = "data") %>% 
+  mutate(type = "data", facets = NA) %>% 
   rowid_to_column() %>% 
   group_by(rowid) %>% 
   nest() %>% 

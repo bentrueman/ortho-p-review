@@ -1,4 +1,9 @@
 
+#------------------ notes ------------------
+
+# ggh4x must be the development version to make fig. s29; use
+# remotes::install_github("teunbrand/ggh4x")
+
 #------------------ setup ------------------
 
 source(here::here("R/02-fit-gam-non-seasonal.R"))
